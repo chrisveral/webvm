@@ -1,12 +1,30 @@
 FROM --platform=i386 i386/debian:buster
+
 ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get clean && apt-get update && apt-get -y upgrade
-RUN apt-get -y install apt-utils \
-	vim curl fakeroot \
-	nodejs npm \
-	netcat-openbsd
-RUN useradd -m user && echo "user:password" | chpasswd
-WORKDIR /home/user/
-ENV HOME="/home/user" TERM="xterm" USER="user" SHELL="/bin/bash" EDITOR="vim" LANG="en_US.UTF-8" LC_ALL="C"
-RUN echo 'root:password' | chpasswd
-CMD [ "/bin/bash" ]
+
+SHELL ["/bin/bash", "-l", "-euxo", "pipefail", "-c"]
+
+RUN apt-get update; \
+    apt-get full-upgrade -y; \
+    apt-get install -y --no-install-recommends \
+        ca-certificates \
+        curl \
+    ; \
+    apt-get clean; \
+    rm -rf /var/lib/apt/lists/*
+
+ENV NVM_DIR /usr/local/nvm
+
+RUN mkdir -p "$NVM_DIR"; \
+    curl -o- \
+        "https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh" | \
+        bash \
+    ; \
+    source $NVM_DIR/nvm.sh; \
+    nvm install --lts --latest-npm
+
+RUN command -v nvm; \
+    command -v node; \
+    node --version; \
+    command -v npm; \
+    npm --version
