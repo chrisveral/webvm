@@ -11,7 +11,7 @@ RUN apt-get update; \
     rm -rf /var/lib/apt/lists/*
 
 RUN curl --silent -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-RUN source ~/.bashrc && nvm install && nvm use
+RUN source ~/.nvm/nvm.sh && nvm install && nvm use
 
 RUN command -v nvm; \
     command -v node; \
